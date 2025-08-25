@@ -1,0 +1,508 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Haidar Tech & Consultancy Services — Inventory Dashboard</title>
+  <style>
+    :root{
+      --bg:#0f172a;/* slate-900 */
+      --card:#111827;/* gray-900 */
+      --muted:#94a3b8;/* slate-400 */
+      --text:#e5e7eb;/* gray-200 */
+      --brand:#ef4444;/* red-500 */
+      --accent:#f59e0b;/* amber-500 */
+      --ok:#22c55e;/* green-500 */
+      --warn:#eab308;/* yellow-500 */
+      --bad:#ef4444;/* red-500 */
+      --ring: rgba(239,68,68,.35);
+    }
+    html,body{height:100%}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0b1023,#0f172a 30%,#0f172a);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif}
+    a{color:inherit}
+    .shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{background:rgba(17,24,39,.7);backdrop-filter: blur(8px);border-right:1px solid rgba(148,163,184,.15);padding:20px;position:sticky;top:0;height:100vh}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.4px}
+        .logo .mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background: radial-gradient(120% 120% at 20% 10%, var(--brand), #7c2d12 60%);box-shadow:0 10px 30px rgba(239,68,68,.35)}
+    .muted{color:var(--muted)}
+    nav{margin-top:24px;display:grid;gap:6px}
+    .nav-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid transparent;color:#cbd5e1;cursor:pointer;background:none}
+    .nav-btn.active,.nav-btn:hover{border-color:rgba(148,163,184,.18);background:rgba(148,163,184,.06)}.main{padding:24px}
+.topbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+.pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(148,163,184,.2);color:#cbd5e1;display:inline-flex;gap:8px;align-items:center}
+
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:720px){.shell{grid-template-columns:1fr}.sidebar{position:static;height:auto}.grid{grid-template-columns:1fr}}
+
+.card{background:linear-gradient(180deg,rgba(2,6,23,.6),rgba(2,6,23,.2));border:1px solid rgba(148,163,184,.12);border-radius:20px;padding:16px;box-shadow: 0 8px 20px rgba(0,0,0,.25)}
+.stat{display:flex;align-items:center;justify-content:space-between}
+.stat h3{margin:0 0 6px 0;font-size:13px;color:#cbd5e1}
+.stat .big{font-size:26px;font-weight:800;letter-spacing:.3px}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.input,.select{background:rgba(2,6,23,.5);border:1px solid rgba(148,163,184,.2);border-radius:12px;padding:10px 12px;color:#e2e8f0}
+.input:focus{outline:2px solid var(--ring);border-color:transparent}
+.btn{border:1px solid rgba(148,163,184,.2);background:rgba(239,68,68,.12);color:#fecaca;padding:10px 14px;border-radius:12px;font-weight:600;cursor:pointer}
+.btn.secondary{background:rgba(148,163,184,.08);color:#e2e8f0}
+.btn.success{background:rgba(34,197,94,.18);color:#dcfce7}
+.btn.warn{background:rgba(234,179,8,.2);color:#fef9c3}
+
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px dashed rgba(148,163,184,.15);text-align:left}
+th{font-size:12px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.08em}
+tbody tr:hover{background:rgba(148,163,184,.04)}
+.badge{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid transparent}
+.b-ok{background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.35)}
+.b-warn{background:rgba(234,179,8,.15);color:#fde68a;border-color:rgba(234,179,8,.35)}
+.b-bad{background:rgba(239,68,68,.15);color:#fecaca;border-color:rgba(239,68,68,.35)}
+
+.split{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+@media (max-width:1100px){.split{grid-template-columns:1fr}}
+
+.kbar{display:flex;gap:8px;align-items:center;margin-top:8px}
+.k{border:1px solid rgba(148,163,184,.3);padding:2px 8px;border-radius:8px;color:#e2e8f0;background:rgba(15,23,42,.6)}
+
+/* Auth screen */
+.auth{display:grid;place-items:center;min-height:100vh;padding:24px}
+.auth .panel{max-width:460px;width:100%}
+.brand{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.brand .mark{width:48px;height:48px;border-radius:14px;background: radial-gradient(120% 120% at 20% 10%, var(--brand), #7c2d12 60%);display:grid;place-items:center;box-shadow:0 10px 30px rgba(239,68,68,.35)}
+.hint{font-size:12px;color:#cbd5e1}
+.row{display:grid;gap:8px;margin:10px 0}
+.right{display:flex;justify-content:flex-end}
+.link{color:#fca5a5;text-decoration:underline;cursor:pointer}
+
+  </style>
+</head>
+<body>
+  <!-- AUTH SCREEN -->
+  <section id="auth" class="auth">
+    <div class="panel card">
+      <div class="brand">
+        <div class="mark">🔺</div>
+        <div>
+        
+          <h1 style="margin:0">Haidar Tech & CS</h1>
+        
+          <div class="muted">Secure Login • Inventory Dashboard</div>
+        
+        </div>
+      </div><div class="row">
+    <label>Email</label>
+    <input id="email" class="input" type="email" placeholder="admin@haidartech.com" />
+  </div>
+  <div class="row">
+    <label>Password</label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="password" class="input" type="password" placeholder="•••••" style="flex:1" />
+      <button class="btn secondary" id="togglePass" type="button">Show</button>
+    </div>
+    <div class="hint">Demo credentials are preloaded. Change them in <em>Settings → Users</em>.</div>
+  </div>
+  <div class="row right">
+    <button class="btn" id="loginBtn">Sign In</button>
+  </div>
+
+  <details class="row">
+    <summary class="muted">Need help?</summary>
+    <div class="kbar">
+      <div class="k">Email: admin@haidartech.com</div>
+      <div class="k">: Ak95059505</div>
+    </div>
+  </details>
+</div>
+
+  </section>  <!-- APP SHELL -->  <section id="app" style="display:none">
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="">
+          <div class="mark">🔺</div>
+          <div>
+            <div>Haidar Tech</div>
+            <div class="muted" style="font-size:12px">GRA Damaturu, Yobe</div>
+          </div>
+        </div>
+        <nav>
+          <button class="nav-btn active" data-screen="dashboard">🏠 Dashboard</button>
+          <button class="nav-btn" data-screen="inventory">📦 Inventory</button>
+          <button class="nav-btn" data-screen="services">🧰 Services</button>
+          <button class="nav-btn" data-screen="suppliers">🚚 Suppliers</button>
+          <button class="nav-btn" data-screen="settings">⚙️ Settings</button>
+        </nav>
+        <div style="margin-top:auto">
+          <hr style="border-color:rgba(148,163,184,.2);margin:16px 0" />
+          <button id="logoutBtn" class="nav-btn" style="width:100%">🚪 Logout</button>
+        </div>
+      </aside><main class="main">
+    <div class="topbar">
+      <div class="pill">Haidar Tech & Consultancy Services <span class="muted">• Inventory System</span></div>
+      <div class="pill" id="userPill">Admin</div>
+    </div>
+
+    <!-- DASHBOARD -->
+    
+    <section id="screen-dashboard">
+          <div class="grid">
+        <div class="card stat"><div><h3>Total Items</h3><div class="big" id="stat-total">0</div></div>📦</div>
+        <div class="card stat"><div><h3>Stock Value</h3><div class="big" id="stat-value">₦0</div></div>💰</div>
+        <div class="card stat"><div><h3>Low Stock</h3><div class="big" id="stat-low">0</div></div>⚠️</div>
+        <div class="card stat"><div><h3>Categories</h3><div class="big" id="stat-cats">0</div></div>🗂️</div>
+      </div>
+
+      <div class="split" style="margin-top:16px">
+        <div class="card">
+          <h3 style="margin:0 0 10px">Recent Activity</h3>
+          <ul id="activity" class="muted" style="margin:0;padding-left:18px;min-height:86px"></ul>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 10px">Quick Actions</h3>
+          <div class="toolbar">
+            <button class="btn success" onclick="openAddModal()">＋ Add Item</button>
+            <button class="btn secondary" onclick="exportCSV()">⬇ Export CSV</button>
+            <button class="btn warn" onclick="seedDemo()">↻ Reset Demo Data</button>
+          </div>
+          <div class="kbar">
+            <div class="k">Ctrl + K : Search</div>
+            <div class="k">Ctrl + N : New Item</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="screen-inventory" style="display:none">
+      <div class="card">
+        <div class="toolbar">
+          <input id="q" class="input" placeholder="Search item name, code or category…" />
+          <select id="cat" class="select">
+            <option value="">All Categories</option>
+          </select>
+          <button class="btn success" onclick="openAddModal()">＋ Add Item</button>
+        </div>
+        <div class="card" style="padding:0;overflow:auto">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th>Item Code</th><th>Item Name</th><th>Category</th><th>Description</th><th>Qty</th><th>Unit Price (₦)</th><th>Total (₦)</th><th>Reorder</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="screen-services" style="display:none">
+      <div class="card">
+        <h3 style="margin-top:0">Our Services</h3>
+        <ul>
+          <li>Website Design & Development</li>
+          <li>Graphic Design & Branding</li>
+          <li>Computer Sales & Repairs</li>
+          <li>Computer Maintenance & Networking</li>
+          <li>ICT Consultancy & Training</li>
+          <li>Digital Marketing & Advertising</li>
+          <li>Software Installation & Support</li>
+          <li>Business Portfolio & Company Profile Design</li>
+          <li>Data Management & Backup Solutions</li>
+          <li>General ICT Support Services</li>
+        </ul>
+        <div class="pill" style="margin-top:10px">📞 08148819994 • GRA Damaturu, Yobe State</div>
+      </div>
+    </section>
+
+    <!-- SUPPLIERS -->
+    <section id="screen-suppliers" style="display:none">
+      <div class="card">
+        <h3 style="margin:0 0 10px">Suppliers</h3>
+        <p class="muted">Track who you buy from. (Demo list — edit as needed.)</p>
+        <table>
+          <thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th>Notes</th></tr></thead>
+          <tbody id="suppliers">
+            <tr><td>HP Authorized Dealer</td><td>sales@hpdealer.ng</td><td>0800-000-1111</td><td>Laptops, accessories</td></tr>
+            <tr><td>NetLink Ltd</td><td>support@netlink.ng</td><td>0800-000-2222</td><td>Networking & cabling</td></tr>
+            <tr><td>PrintWorks</td><td>hello@printworks.ng</td><td>0800-000-3333</td><td>Branding materials</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="screen-settings" style="display:none">
+      <div class="card">
+        <h3 style="margin:0 0 10px">Settings</h3>
+        <div class="split">
+          <div>
+            <h4>Company</h4>
+            <div class="row"><label>Name</label><input id="companyName" class="input" placeholder="Haidar Tech & Consultancy Services"></div>
+            <div class="row"><label>Phone</label><input id="companyPhone" class="input" placeholder="08148819994"></div>
+            <div class="row"><label>Address</label><input id="companyAddress" class="input" placeholder="GRA Damaturu, Yobe State"></div>
+            <button class="btn success" onclick="saveCompany()">Save Company Profile</button>
+          </div>
+          <div>
+            <h4>Users</h4>
+            <div class="row"><label>Admin Email</label><input id="adminEmail" class="input" placeholder="admin@haidartech.com"></div>
+            <div class="row"><label>Admin Password</label><input id="adminPass" class="input" placeholder="Ak95059505"></div>
+            <button class="btn" onclick="saveUser()">Update Credentials</button>
+            <p class="hint">Credentials are stored locally on this device (no server).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD/EDIT MODAL (very light-weight) -->
+    <dialog id="modal" style="border:none;border-radius:16px;padding:0;max-width:720px;width:96%">
+      <form method="dialog" class="card" style="margin:0">
+        <h3 id="modalTitle" style="margin:0 0 10px">Add Item</h3>
+        <div class="split">
+          <div>
+            <div class="row"><label>Item Code</label><input id="m_code" class="input" required></div>
+            <div class="row"><label>Item Name</label><input id="m_name" class="input" required></div>
+            <div class="row"><label>Category</label><input id="m_cat" class="input" list="catlist" required></div>
+            <datalist id="catlist"></datalist>
+            <div class="row"><label>Description</label><input id="m_desc" class="input"></div>
+          </div>
+          <div>
+            <div class="row"><label>Quantity</label><input id="m_qty" class="input" type="number" min="0" required></div>
+            <div class="row"><label>Unit Price (₦)</label><input id="m_price" class="input" type="number" min="0" step="0.01" required></div>
+            <div class="row"><label>Reorder Level</label><input id="m_reorder" class="input" type="number" min="0" required></div>
+          </div>
+        </div>
+        <div class="right" style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn secondary" value="cancel">Cancel</button>
+          <button class="btn success" id="saveItemBtn" value="default">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+  </main>
+</div>
+
+  </section>  <script>
+    // ---------- Utilities ----------
+    const fmt = n => new Intl.NumberFormat('en-NG',{style:'currency',currency:'NGN',maximumFractionDigits:0}).format(+n||0)
+    const el = id => document.getElementById(id)
+    const store = {
+      get(k, d){ try { return JSON.parse(localStorage.getItem(k)) ?? d } catch{ return d } },
+      set(k, v){ localStorage.setItem(k, JSON.stringify(v)) }
+    }
+
+    // ---------- Demo Seed Data ----------
+    const DEMO = {
+      user: { email:'admin@haidartech.com', pass:'12345', name:'Admin' },
+      company: { name:'Haidar Tech & Consultancy Services', phone:'08148819994', address:'GRA Damaturu, Yobe State' },
+      items: [
+        {code:'IT001', name:'HP Laptop 250 G8', cat:'Computer Sales & Repairs', desc:'8GB RAM, 512GB SSD', qty:10, price:350000, reorder:5},
+        {code:'IT002', name:'Dell Optiplex Desktop', cat:'Computer Sales & Repairs', desc:'Core i5, 8GB RAM', qty:5, price:280000, reorder:3},
+        {code:'NT001', name:'Cat6 Cable 305m', cat:'Networking', desc:'UTP, Blue', qty:3, price:55000, reorder:2},
+        {code:'GD001', name:'A4 Printing Paper', cat:'Branding & Design', desc:'80gsm, white', qty:25, price:3000, reorder:10},
+        {code:'SP001', name:'Universal Laptop Charger 65W', cat:'Spare Parts', desc:'HP/Dell compatible', qty:7, price:12000, reorder:5},
+        {code:'DM001', name:'External Hard Drive 1TB', cat:'Data Management', desc:'USB 3.0', qty:6, price:30000, reorder:4}
+      ]
+    }
+
+    function seedDemo(){ store.set('user', DEMO.user); store.set('company', DEMO.company); store.set('items', DEMO.items); addActivity('Demo data reset'); renderAll() }
+
+    // ---------- Auth ----------
+    function initAuth(){
+      if(!store.get('user')) store.set('user', DEMO.user)
+      el('togglePass').onclick = () => {
+        const p = el('password'); p.type = p.type === 'password' ? 'text':'password'
+      }
+      el('loginBtn').onclick = () => {
+        const u = store.get('user');
+        const ok = el('email').value.trim() === u.email && el('password').value === u.pass
+        if(ok){
+          sessionStorage.setItem('auth','1');
+          el('auth').style.display='none';
+          el('app').style.display='block';
+          renderAll()
+        } else {
+          alert('Invalid credentials. Hint: admin@haidartech.com / Ak95059505')
+        }
+      }
+      if(sessionStorage.getItem('auth')==='1'){ el('auth').style.display='none'; el('app').style.display='block'; renderAll() }
+    }
+
+    // ---------- Navigation ----------
+    document.addEventListener('click', e=>{
+      if(e.target.matches('.nav-btn')){
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'))
+        e.target.classList.add('active')
+        const scr = e.target.dataset.screen
+        document.querySelectorAll('[id^="screen-"]').forEach(s=>s.style.display='none')
+        el('screen-'+scr).style.display='block'
+      }
+    })
+    el('logoutBtn').onclick = () => { sessionStorage.removeItem('auth'); location.reload() }
+
+    // ---------- Company & User Settings ----------
+    function saveCompany(){
+      const c = {
+        name: el('companyName').value || DEMO.company.name,
+        phone: el('companyPhone').value || DEMO.company.phone,
+        address: el('companyAddress').value || DEMO.company.address,
+      }
+      store.set('company', c); addActivity('Company profile updated'); renderHeader()
+    }
+    function saveUser(){
+      const u = store.get('user');
+      u.email = el('adminEmail').value || u.email
+      u.pass = el('adminPass').value || u.pass
+      store.set('user', u); addActivity('Credentials updated'); renderHeader()
+    }
+
+    // ---------- Inventory CRUD ----------
+    function getItems(){ return store.get('items', DEMO.items) }
+    function setItems(v){ store.set('items', v) }
+
+    function openAddModal(item=null){
+      el('modalTitle').textContent = item? 'Edit Item' : 'Add Item'
+      el('m_code').value = item?.code || ''
+      el('m_name').value = item?.name || ''
+      el('m_cat').value = item?.cat || ''
+      el('m_desc').value = item?.desc || ''
+      el('m_qty').value = item?.qty ?? ''
+      el('m_price').value = item?.price ?? ''
+      el('m_reorder').value = item?.reorder ?? ''
+      el('modal').returnValue=''
+      el('modal').showModal()
+      el('saveItemBtn').onclick = (ev)=>{
+        ev.preventDefault()
+        const rec = {
+          code: el('m_code').value.trim(),
+          name: el('m_name').value.trim(),
+          cat: el('m_cat').value.trim(),
+          desc: el('m_desc').value.trim(),
+          qty: +el('m_qty').value,
+          price: +el('m_price').value,
+          reorder: +el('m_reorder').value,
+        }
+        if(!rec.code || !rec.name){ alert('Code and Name are required'); return }
+        const items = getItems()
+        const idx = items.findIndex(x=>x.code===rec.code)
+        if(idx>-1){ items[idx]=rec; addActivity(`Updated ${rec.code}`) }
+        else { items.push(rec); addActivity(`Added ${rec.code}`) }
+        setItems(items)
+        el('modal').close()
+        renderAll()
+      }
+    }
+
+    function removeItem(code){
+      if(!confirm('Delete '+code+' ?')) return
+      const items = getItems().filter(x=>x.code!==code)
+      setItems(items); addActivity('Deleted '+code); renderAll()
+    }
+
+    // ---------- Renderers ----------
+    function renderHeader(){
+      const u = store.get('user')
+      const c = store.get('company', DEMO.company)
+      el('userPill').textContent = (u.name||'Admin')+ ' • ' + (c.name||'Company')
+      el('companyName').value = c.name; el('companyPhone').value=c.phone; el('companyAddress').value=c.address
+      el('adminEmail').value = u.email; el('adminPass').value = u.pass
+      document.title = c.name + ' — Inventory Dashboard'
+    }
+
+    function renderStats(){
+      const items = getItems()
+      const totalItems = items.reduce((a,b)=>a + (b.qty||0),0)
+      const stockValue = items.reduce((a,b)=>a + (b.qty*b.price||0),0)
+      const low = items.filter(x=>x.qty<=x.reorder).length
+      const cats = new Set(items.map(x=>x.cat)).size
+      el('stat-total').textContent = totalItems
+      el('stat-value').textContent = fmt(stockValue)
+      el('stat-low').textContent = low
+      el('stat-cats').textContent = cats
+    }
+
+    function statusBadge(it){
+      if(it.qty<=0) return '<span class="badge b-bad">Out</span>'
+      if(it.qty<=it.reorder) return '<span class="badge b-warn">Low</span>'
+      return '<span class="badge b-ok">OK</span>'
+    }
+
+    function renderTable(){
+      const q = el('q').value.toLowerCase();
+      const sel = el('cat').value
+      const tb = el('tbl').querySelector('tbody')
+      tb.innerHTML=''
+      const items = getItems().filter(it=>{
+        const hay = (it.code+it.name+it.cat+it.desc).toLowerCase()
+        const passQ = !q || hay.includes(q)
+        const passC = !sel || it.cat===sel
+        return passQ && passC
+      })
+      for(const it of items){
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+          <td>${it.code}</td>
+          <td>${it.name}</td>
+          <td>${it.cat}</td>
+          <td>${it.desc||''}</td>
+          <td>${it.qty}</td>
+          <td>${it.price.toLocaleString()}</td>
+          <td>${(it.qty*it.price).toLocaleString()}</td>
+          <td>${it.reorder}</td>
+          <td>${statusBadge(it)}</td>
+          <td>
+            <button class="btn secondary" onclick='openAddModal(${JSON.stringify(it)})'>Edit</button>
+            <button class="btn" onclick='removeItem("${it.code}")'>Delete</button>
+          </td>`
+        tb.appendChild(tr)
+      }
+    }
+
+    function renderFilters(){
+      const sel = el('cat'); sel.innerHTML='<option value="">All Categories</option>'
+      const dl = el('catlist'); dl.innerHTML=''
+      const cats = [...new Set(getItems().map(x=>x.cat))].sort()
+      for(const c of cats){
+        const o = document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o)
+        const d = document.createElement('option'); d.value=c; dl.appendChild(d)
+      }
+    }
+
+    function addActivity(msg){
+      const log = store.get('activity', [])
+      log.unshift({t: new Date().toLocaleString(), m: msg})
+      store.set('activity', log.slice(0,20))
+      renderActivity()
+    }
+    function renderActivity(){
+      const list = el('activity'); list.innerHTML=''
+      const log = store.get('activity', [])
+      for(const e of log){
+        const li = document.createElement('li'); li.textContent = `${e.t} — ${e.m}`; list.appendChild(li)
+      }
+    }
+
+    function exportCSV(){
+      const items = getItems()
+      const rows = [['Item Code','Item Name','Category','Description','Quantity','Unit Price','Total','Reorder Level']]
+      for(const it of items){ rows.push([it.code,it.name,it.cat,it.desc,it.qty,it.price,it.qty*it.price,it.reorder]) }
+      const csv = rows.map(r=>r.map(v=>`"${(v??'').toString().replaceAll('"','""')}"`).join(',')).join('\n')
+      const blob = new Blob([csv],{type:'text/csv'})
+      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='inventory.csv'; a.click()
+    }
+
+    function renderAll(){
+      renderHeader(); renderStats(); renderFilters(); renderTable(); renderActivity()
+    }
+
+    // ---------- Search & Shortcuts ----------
+    el('q').addEventListener('input', renderTable)
+    el('cat').addEventListener('change', renderTable)
+    document.addEventListener('keydown', e=>{
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); el('q').focus() }
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='n'){ e.preventDefault(); openAddModal() }
+    })
+
+    // ---------- Boot ----------
+    if(!store.get('items')) seedDemo();
+    initAuth();
+  </script></body>
+</html>
